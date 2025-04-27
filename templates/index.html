@@ -3,167 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attack Prediction</title>
+    <title>Attack Detection - Predict</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #1d1f21; /* Dark background for cybersecurity feel */
-            font-family: Arial, sans-serif;
-            color: #f5f5f5; /* Light text color */
+            background-color: #1d1f21;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f5f5f5;
+            padding: 20px;
         }
         .container {
-            margin-top: 50px;
+            margin-top: 30px;
             padding: 30px;
             border-radius: 10px;
-            background-color: #2c3e50; /* Darker container background */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background-color: #2c3e50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             position: relative;
-        }
-        .top-right-buttons {
-            position: absolute;
-            top: 20px;
-            right: 20px;
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #00bcd4; /* Bright cyan for titles */
+            color: #00bcd4;
         }
-        .form-group label {
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #1abc9c;
+        }
+        .alert {
+            background-color: rgba(255, 77, 77, 0.1);
+            border-left: 6px solid #ff4d4d;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #ff9999;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
+        }
+        form {
+            margin-top: 30px;
+        }
+        label {
             font-weight: bold;
-            color: #00bcd4; /* Bright cyan for labels */
+            color: #00bcd4;
         }
-        .form-control {
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
             border-radius: 5px;
-            background-color: #34495e; /* Dark input field background */
-            border: 1px solid #00bcd4; /* Cyan border */
-            color: #f5f5f5; /* Light text color */
+            border: 1px solid #00bcd4;
+            background-color: #34495e;
+            color: #f5f5f5;
         }
-        .form-control:focus {
-            background-color: #1abc9c; /* Light green when focused */
-            border-color: #00bcd4; /* Maintain cyan border on focus */
-            color: #ffffff; /* Change text color on focus */
+        input[type="text"]:focus {
+            background-color: #1abc9c;
+            border-color: #00bcd4;
+            color: #ffffff;
             box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
         }
-        .btn-primary {
-            background-color: #00bcd4; /* Bright cyan */
-            border-color: #00bcd4; /* Bright cyan */
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #00bcd4;
+            border: none;
+            color: white;
             border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
+            margin-right: 10px;
         }
-        .btn-primary:hover {
-            background-color: #0097a7; /* Darker cyan on hover */
-            border-color: #0097a7; /* Darker cyan border */
-            transform: scale(1.05); /* Slight scale effect */
-        }
-        .btn-secondary {
-            background-color: #7f8c8d; /* Gray for secondary buttons */
-            border-color: #7f8c8d; /* Gray border */
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .btn-secondary:hover {
-            background-color: #616e76; /* Darker gray on hover */
-            border-color: #616e76; /* Darker gray border */
-            transform: scale(1.05); /* Slight scale effect */
-        }
-        .btn-danger {
-            background-color: #e74c3c; /* Red for stop button */
-            border-color: #e74c3c;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b; /* Darker red on hover */
-            border-color: #c0392b;
+        button:hover {
+            background-color: #0097a7;
             transform: scale(1.05);
         }
-        .result {
-            margin-top: 20px;
+        pre {
+            background-color: #34495e;
             padding: 15px;
-            border: 1px solid #00bcd4; /* Cyan border for results */
-            border-radius: 5px;
-            background-color: rgba(0, 188, 212, 0.1); /* Light cyan background */
-        }
-        .result h4 {
-            color: #00bcd4; /* Bright cyan for result titles */
-        }
-        .result pre {
-            background-color: #34495e; /* Dark background for details */
-            border-radius: 5px;
-            padding: 10px;
+            border-radius: 8px;
             overflow-x: auto;
-            color: #f5f5f5; /* Light text color */
+            color: #f5f5f5;
         }
         .button-group {
-            margin-top: 15px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            margin-top: 30px;
+            gap: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-right-buttons">
-            <button type="button" class="btn btn-info" onclick="window.location.href='/statistics'">Statistics</button>
-            <button type="button" class="btn btn-info ml-2" onclick="window.location.href='/models'">Models</button>
-        </div>
-        <h1>Real-Time Attack Prediction</h1>
-        <form action="/predict" method="post">
-            <div class="form-group">
-                <label for="feature1">ID:</label>
-                <input type="number" step="any" class="form-control" name="feature1" required>
-            </div>
-            <div class="form-group">
-                <label for="feature2">STTL:</label>
-                <input type="number" step="any" class="form-control" name="feature2" required>
-            </div>
-            <div class="form-group">
-                <label for="feature3">DTTL:</label>
-                <input type="number" step="any" class="form-control" name="feature3" required>
-            </div>
-            <div class="form-group">
-                <label for="feature4">SWIN:</label>
-                <input type="number" step="any" class="form-control" name="feature4" required>
-            </div>
-            <div class="form-group">
-                <label for="feature5">DWIN:</label>
-                <input type="number" step="any" class="form-control" name="feature5" required>
-            </div>
-            <div class="form-group">
-                <label for="feature6">CT_SRV_SRC:</label>
-                <input type="number" step="any" class="form-control" name="feature6" required>
-            </div>
-            <div class="form-group">
-                <label for="feature7">CT_DST_SPORT_LTM:</label>
-                <input type="number" step="any" class="form-control" name="feature7" required>
-            </div>
-            <div class="form-group">
-                <label for="feature8">CT_DST_SRC_LTM:</label>
-                <input type="number" step="any" class="form-control" name="feature8" required>
-            </div>
-            <div class="form-group">
-                <label for="feature9">CT_SRV_DST:</label>
-                <input type="number" step="any" class="form-control" name="feature9" required>
-            </div>
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">Predict</button>
-                <button type="button" class="btn btn-secondary" onclick="window.open('/monitor', '_blank', 'width=800,height=600')">Start Real-Time Monitoring</button>
-                <form action="/stop_alarm" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Stop Alarm</button>
-                </form>
-            </div>
-        </form>
 
-        <div class="result">
-            <h4>Prediction Result:</h4>
-            <p>{{ prediction_text if prediction_text else "No prediction yet." }}</p>
+<div class="container">
+    <h1>🚀 Attack Detection - Manual Prediction</h1>
+
+    {% if alert_message %}
+        <div class="alert">
+            {{ alert_message|safe }}
         </div>
-        <div class="result">
-            <h4>Details:</h4>
-            <pre>{{ details if details else "No details available." }}</pre>
+    {% endif %}
+
+    <h2>{{ prediction_text }}</h2>
+
+    <pre>{{ details }}</pre>
+
+    <form action="/predict" method="POST">
+        {% for i in range(1, 10) %}
+            <label>Feature {{ i }}:</label>
+            <input type="text" name="feature{{ i }}" required>
+        {% endfor %}
+        <div class="button-group">
+            <button type="submit">Predict Attack</button>
+            <button type="button" onclick="window.location.href='/monitor'">Real-Time Monitoring</button>
         </div>
-    </div>
+    </form>
+</div>
+
 </body>
 </html>
